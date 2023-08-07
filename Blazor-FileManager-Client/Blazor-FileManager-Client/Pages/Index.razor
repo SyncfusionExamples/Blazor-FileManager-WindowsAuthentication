@@ -1,0 +1,75 @@
+﻿@page "/"
+
+@using System.Security.Claims;
+@using System.IdentityModel.Tokens.Jwt;
+@using Microsoft.IdentityModel.Tokens;
+@using System.Net.Http.Headers
+@using System.Text;
+@using Syncfusion.Blazor.FileManager;
+@inject HttpClient Http
+<SfFileManager TValue="FileManagerDirectoryContent" Width="1000px">
+    <FileManagerAjaxSettings Url="https://localhost:7073/api/FileManager/FileOperations"
+                             UploadUrl="https://localhost:7073/api/FileManager/Upload"
+                             DownloadUrl="https://localhost:7073/api/FileManager/Download"
+                             GetImageUrl="https://localhost:7073/api/FileManager/GetImage"></FileManagerAjaxSettings>
+    <FileManagerEvents TValue="FileManagerDirectoryContent" OnSend="OnBeforeSend"></FileManagerEvents>
+</SfFileManager>
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    public static System.Text.Encoding UTF8 { get; }
+    public string response;
+    string text = "Testing";
+    public string Token;
+    public string name;
+    public bool isRead = true;
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+        //Generate user token based on the user authenticated state.
+        if (user.Identity.IsAuthenticated)
+        {
+            Token = GenerateToken(user);
+        }
+    }
+    private string GenerateToken(ClaimsPrincipal user)
+    {
+        //Assign the security key value
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ACDt1vR3lXToPQ1g3MyN"));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        //Assign the user role value of authenticate server response
+        var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToArray();
+        roles = new string[] { "Admin" };
+        name = user.Identity.Name;
+        var claims = new[]
+        {
+                new Claim(ClaimTypes.NameIdentifier,user.Identity.Name),
+                new Claim(ClaimTypes.Role,string.Join(",", roles))
+    };
+        //For define token value refer the below example code.
+
+        //var token = new JwtSecurityToken("Issue host link(server)",
+        //"Audience host link(client)",
+        //claims,
+        //expires: DateTime.Now.AddMinutes(15),
+        //signingCredentials: credentials);
+
+        var token = new JwtSecurityToken("https://localhost:7073",
+        "https://localhost:7004",
+        claims,
+        expires: DateTime.Now.AddMinutes(15),
+        signingCredentials: credentials);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+
+    }
+    public async Task OnBeforeSend(BeforeSendEventArgs args)
+    {
+        if (isRead && args.Action == "read")
+        {
+            //Pass the user token through FileManager HTTP client instance.
+            args.HttpClientInstance.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            isRead = false;
+        }
+    }
+}
