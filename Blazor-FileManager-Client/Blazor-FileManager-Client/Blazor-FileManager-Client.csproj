@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Negotiate" Version="6.0.20" />
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.26" />
 	  <PackageReference Include="Syncfusion.Blazor.FileManager" Version="22.2.7" />
 	  <PackageReference Include="Syncfusion.Blazor.Themes" Version="22.2.7" />
   </ItemGroup>

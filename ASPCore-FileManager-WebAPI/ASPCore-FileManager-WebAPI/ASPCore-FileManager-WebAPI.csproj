@@ -8,8 +8,8 @@
   </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
-		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.22.1" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.26" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.35.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.35.0" />
 	</ItemGroup>
 </Project>
