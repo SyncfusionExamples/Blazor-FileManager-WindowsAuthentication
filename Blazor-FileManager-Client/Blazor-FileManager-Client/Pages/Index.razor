@@ -36,7 +36,7 @@
     private string GenerateToken(ClaimsPrincipal user)
     {
         //Assign the security key value
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ACDt1vR3lXToPQ1g3MyN"));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ACDt1vR3lXToPQ1g3MyNACDt1vR3lXToPQ1g3MyN"));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         //Assign the user role value of authenticate server response
         var roles = user.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value).ToArray();
