@@ -12,7 +12,8 @@
                              UploadUrl="https://localhost:7073/api/FileManager/Upload"
                              DownloadUrl="https://localhost:7073/api/FileManager/Download"
                              GetImageUrl="https://localhost:7073/api/FileManager/GetImage"></FileManagerAjaxSettings>
-    <FileManagerEvents TValue="FileManagerDirectoryContent" OnSend="OnBeforeSend"></FileManagerEvents>
+    <FileManagerUploadSettings UploadMode="UploadMode.HttpClient"></FileManagerUploadSettings>
+    <FileManagerEvents TValue="FileManagerDirectoryContent" OnSend="OnBeforeSend" BeforeImageLoad="HandleBeforeImageLoad" BeforeDownload="HandleBeforeDownload"></FileManagerEvents>
 </SfFileManager>
 @code {
     [CascadingParameter]
@@ -71,5 +72,31 @@
             args.HttpClientInstance.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
             isRead = false;
         }
+
+        if (args.Action == "Upload")
+        {
+            args.HttpClientInstance.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+        }
+    }
+
+    private void HandleBeforeImageLoad(BeforeImageLoadEventArgs<FileManagerDirectoryContent> args)
+    {
+        // Switch to HTTP Client-based approach
+        args.UseImageAsUrl = false;
+
+        // Add JWT token for image requests
+        args.HttpClientInstance.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", Token);
+    }
+
+    // Handle download operations
+    private void HandleBeforeDownload(BeforeDownloadEventArgs<FileManagerDirectoryContent> args)
+    {
+        // Switch to HTTP Client-based approach
+        args.UseFormPost = false;
+
+        // Add JWT token for download requests
+        args.HttpClientInstance.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", Token);
     }
 }
