@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -2152,18 +2151,12 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
         }
         public string ToCamelCase(FileManagerResponse userData)
         {
-            return JsonConvert.SerializeObject(userData, new JsonSerializerSettings
+            JsonSerializerOptions options = new JsonSerializerOptions
             {
-#if EJ2_DNX
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
 
-#else
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                }
-#endif
-            });
+            return JsonSerializer.Serialize(userData, options);
         }
 
         FileStreamResult FileProviderBase.Download(string path, string[] names, params FileManagerDirectoryContent[] data)

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Syncfusion.EJ2.FileManager.PhysicalFileProvider;
 using Syncfusion.EJ2.FileManager.Base;
 using Microsoft.AspNetCore.Cors;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
@@ -18,7 +18,6 @@ namespace ASPCore_FileManager_WebAPI.Controllers
         string basePath;
         string root = "wwwroot\\Files";
 
-        [Obsolete]
         public FileManagerController(IWebHostEnvironment hostingEnvironment)
         {
             this.basePath = hostingEnvironment.ContentRootPath;
@@ -95,6 +94,7 @@ namespace ASPCore_FileManager_WebAPI.Controllers
         /// <returns></returns>
         //[HttpPost]
         [Route("Upload")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Upload(string path, IList<IFormFile> uploadFiles, string action)
         {
             FileManagerResponse uploadResponse;
@@ -132,9 +132,9 @@ namespace ASPCore_FileManager_WebAPI.Controllers
         /// <returns></returns>
         //[HttpPost]
         [Route("Download")]
-        public IActionResult Download(string downloadInput)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Download([FromBody] FileManagerDirectoryContent args)
         {
-            FileManagerDirectoryContent args = JsonConvert.DeserializeObject<FileManagerDirectoryContent>(downloadInput);
             return operation.Download(args.Path, args.Names, args.Data);
         }
 
@@ -145,7 +145,8 @@ namespace ASPCore_FileManager_WebAPI.Controllers
         /// <returns></returns>
         //[HttpGet]
         [Route("GetImage")]
-        public IActionResult GetImage(FileManagerDirectoryContent args)
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetImage([FromBody] FileManagerDirectoryContent args)
         {
             return this.operation.GetImage(args.Path, args.Id, false, null, null);
         }
