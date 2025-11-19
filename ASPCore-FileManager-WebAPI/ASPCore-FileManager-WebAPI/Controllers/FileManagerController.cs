@@ -95,12 +95,13 @@ namespace ASPCore_FileManager_WebAPI.Controllers
         //[HttpPost]
         [Route("Upload")]
         [Authorize(Roles = "Admin")]
-        public IActionResult Upload(string path, IList<IFormFile> uploadFiles, string action)
+        [DisableRequestSizeLimit]
+        public IActionResult Upload(string path, long size,IList<IFormFile> uploadFiles, string action)
         {
             FileManagerResponse uploadResponse;
             foreach (var file in uploadFiles)
             {
-                var folders = (file.FileName).Split('/');
+                var folders = (file.FileName ?? string.Empty).Split('/');
                 // checking the folder upload
                 if (folders.Length > 1)
                 {
@@ -115,7 +116,7 @@ namespace ASPCore_FileManager_WebAPI.Controllers
                     }
                 }
             }
-            uploadResponse = operation.Upload(path, uploadFiles, action, null);
+            uploadResponse = operation.Upload(path, uploadFiles, action, size);
             if (uploadResponse.Error != null)
             {
                 Response.Clear();
