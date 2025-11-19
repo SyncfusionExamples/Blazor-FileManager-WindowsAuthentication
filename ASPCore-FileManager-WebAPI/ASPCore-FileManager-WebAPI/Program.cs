@@ -6,11 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", builder =>
+    options.AddPolicy("AllowAllOrigins", policy =>
     {
-        builder.AllowAnyOrigin()
+        policy.AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader();
     });
@@ -41,13 +42,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllers();
 app.MapRazorPages();
-app.UseCors("AllowAllOrigins");
-app.UseEndpoints(endPoints =>
-{
-    endPoints.MapControllers();
-});
 app.Run();
